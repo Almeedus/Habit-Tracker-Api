@@ -58,3 +58,10 @@ def return_habit(id: int) -> HabitOut:
 @app.delete("/habits/{id}", status_code=204)
 def delete_habit(id: int) -> None:
     habits.remove(search_habit(id))
+
+@app.put("/habits/{id}")
+def update_habits(id: int, new_habit: HabitCreate) -> HabitOut:
+    habit = search_habit(id)
+    habit.name = new_habit.name
+    habit.frequency = new_habit.frequency
+    return habit
