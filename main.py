@@ -54,4 +54,7 @@ def search_habit(id: int) -> HabitOut:
 @app.get("/habits/{id}")
 def return_habit(id: int) -> HabitOut:
     return search_habit(id)
-    
+
+@app.delete("/habits/{id}", status_code=204)
+def delete_habit(id: int) -> None:
+    habits.remove(search_habit(id))
