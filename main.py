@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 app = FastAPI(title='Habit Tracker API')
@@ -12,6 +12,11 @@ class HabitOut(HabitCreate):
     
 habits:HabitOut = []
 
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
+
+
 def create_id() -> int:
     global ID
     
@@ -20,10 +25,6 @@ def create_id() -> int:
     ID = id
     return id
 ID = 0
-
-@app.get("/health")
-def health_check():
-    return {"status": "ok"}
 
 @app.post("/habits")
 def create_habits(habit: HabitCreate) -> dict:
@@ -41,3 +42,16 @@ def create_habits(habit: HabitCreate) -> dict:
 @app.get("/habits")
 def list_habits() -> list[HabitOut]:
     return habits
+
+
+def search_habit(id: int) -> HabitOut:
+    for habit in habits:
+        if habit.id == id:
+            return habit
+        
+    raise HTTPException(status_code=404, detail="Habit not found")
+
+@app.get("/habits/{id}")
+def return_habit(id: int) -> HabitOut:
+    return search_habit(id)
+    
